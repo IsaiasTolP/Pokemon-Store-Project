@@ -18,3 +18,6 @@ button.addEventListener("click", () => {
 function mostrarPokemon() {
     document.querySelector(".cargandoDatos").style.visibility = "visible";
 }
+
+const request = new XMLHttpRequest();
+request.addEventListener()
