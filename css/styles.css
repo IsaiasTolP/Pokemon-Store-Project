@@ -9,3 +9,7 @@
 .listaPokemon {
     visibility: hidden;
 }
+
+.cargandoDatos {
+    visibility: hidden;
+}

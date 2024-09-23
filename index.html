@@ -13,7 +13,7 @@
             </div>
         </header>
         <div class="body">
-            <button class="button" id="button">Let's go</button>
+            <button class="button" id="button" onclick="mostrarPokemon()">Let's go</button>
         </div>
         <div>
             <input type="text" id="filtro" class="input"
@@ -44,7 +44,8 @@
 
         <!-- ToDo: Eliminar el punto de lista con CSS -->
 		<div class="listaPokemon">
-			<ul id="items">
+			<h2 class="cargandoDatos">Cargando datos...</h2>
+            <ul id="items">
 				<li class>
 					<input type="radio" value="Item 1">
 					<label for="html">Pokemon 1</label><br>

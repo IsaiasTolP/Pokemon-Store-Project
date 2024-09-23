@@ -11,4 +11,10 @@ button.addEventListener("click", () => {
     });
 
     document.querySelector(".listaPokemon").style.visibility = "visible";
+
+    mostrarPokemon();
 });
+
+function mostrarPokemon() {
+    document.querySelector(".cargandoDatos").style.visibility = "visible";
+}
