@@ -58,9 +58,9 @@ const showPokedex = async () =>{
         while (aux != pokemons[i].pkm_type.length) {
             if (aux == 0)
                 var tipo1 = pokemons[i].pkm_type[aux].type.name;                       
-            if (aux == 1)   
+            if (aux == 1)
                 var tipo2 = pokemons[i].pkm_type[aux].type.name;
-            else 
+            else
                 tipo2 = "";          
             aux++; 
         }
