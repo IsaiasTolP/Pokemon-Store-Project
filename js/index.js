@@ -19,5 +19,24 @@ function mostrarPokemon() {
     document.querySelector(".cargandoDatos").style.visibility = "visible";
 }
 
+/*
 const request = new XMLHttpRequest();
 request.addEventListener()
+*/
+
+const startPokemon = async () => {
+    for(var i = 1; i <= 151; i++){
+        try{
+            await fetch("https://pokeapi.co/api/v2/pokemon/" + i + "/")
+            .then(function result(){
+                return result.json();
+            })
+            .then(function(data){
+                console.log(data);
+            });
+        }
+        catch (error){
+            console.error(`There is an error ${error}`);
+        }
+    }
+}
