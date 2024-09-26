@@ -1,3 +1,5 @@
+import Pokemon from "./pokemon";
+
 const button = document.querySelector("button");
 
 button.addEventListener("click", () => {
@@ -32,11 +34,16 @@ const startPokemon = async () => {
                 return result.json();
             })
             .then(function(data){
-                console.log(data);
+                const pokemon = new Pokemon(data);
+                pushPokemon(pokemon);
             });
         }
         catch (error){
             console.error(`There is an error ${error}`);
         }
     }
+}
+
+function pushPokemon(pokemon){
+    pokemon.push(pokemon);
 }
