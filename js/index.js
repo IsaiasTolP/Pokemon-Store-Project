@@ -71,6 +71,6 @@ const showPokedex = async () =>{
                                     <div class="types">
                                         ${tipo1} ${tipo2}
                                     </div>
-                                </div>`
+                                </div>`;
     }
 }
