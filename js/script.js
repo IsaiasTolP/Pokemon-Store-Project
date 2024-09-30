@@ -13,9 +13,14 @@ function showConsole() {
         //console.log(e);
         e.style.visibility = "visible";
         e.addEventListener("keypress", (t) => {
-            console.log(`He pulsado ${t.key}`);
-            pokemonsFiltered = pokemons.tipo1.filter();
-        })
+            // console.log(`He pulsado ${t.key}`);
+            const tp1 = document.getElementById(filtroTipo).value;
+            // console.log(tp1);
+            pokemonsFiltered = pokemons.tipo1[1].filter(tp1);
+            pokemonsFiltered.forEach((pk) => {
+                console.log(pk);
+            });
+        });
     });
 
     // Mostrar botones
