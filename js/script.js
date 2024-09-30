@@ -9,9 +9,13 @@ const button = document.querySelector("button");
 
 function showConsole() {
     //Mostrar filtros
-    document.querySelectorAll("#filtro").forEach((e) => {
+    document.querySelectorAll(".input").forEach((e) => {
         //console.log(e);
         e.style.visibility = "visible";
+        e.addEventListener("keypress", (t) => {
+            console.log(`He pulsado ${t.key}`);
+            pokemonsFiltered = pokemons.tipo1.filter();
+        })
     });
 
     // Mostrar botones
@@ -23,7 +27,7 @@ function showConsole() {
 
 button.addEventListener("click", () => {
     // Mostrar lista Pokemon
-    document.querySelector("#pokedex").style.visibility = "visible";;
+    document.querySelector("#pokedex").style.visibility = "visible";
 
     startPokemon();
 
@@ -78,14 +82,14 @@ const showPokedex = async () => {
         }
         pokedex.innerHTML += `
             <div class="card">
-               <img src="${pokemons[i].pkm_back}">
-               <img src="${pokemons[i].pkm_front}">
-               <br>
-               ${pokemons[i].id}. ${pokemons[i].name}
-               <br>
-               <div class="types">
-               ${tipo1}  ${tipo2} 
-               </div>
+                <img src="${pokemons[i].pkm_back}">
+                <img src="${pokemons[i].pkm_front}">
+                <br>
+                ${pokemons[i].id}. ${pokemons[i].name}
+                <br>
+                <div class="types">
+                ${tipo1}  ${tipo2} 
+                </div>
             </div>`;
     }
 };
