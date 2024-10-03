@@ -30,6 +30,10 @@ export class PokemonController {
     // Bind input filterType
     this.filterType = document.querySelector("#filtroTipo");
     this.filterType.addEventListener("keyup", () => this.filteringPokemons());
+    this.filterWeight = document.querySelector("#filtroPeso");
+    this.filterWeight.addEventListener("keyup", () => this.filteringPokemons());
+    this.filterPower = document.querySelector("#filtroPoderTotal");
+    this.filterPower.addEventListener("key", () => this.filteringPokemons());
 
     // Bind Añadir a Lista de deseos
     document
@@ -65,6 +69,10 @@ export class PokemonController {
       }
     });
     this.view.displayPokemons(this.pokemonsFiltered);
+  }
+
+  async filteringPokemonsByWeight(){
+    this.pokemonsFiltered
   }
 
   mostrarListaDeseo() {
