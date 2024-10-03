@@ -33,7 +33,7 @@ export class PokemonController {
     this.filterWeight = document.querySelector("#filtroPeso");
     this.filterWeight.addEventListener("keyup", () => this.filteringPokemons());
     this.filterPower = document.querySelector("#filtroPoderTotal");
-    this.filterPower.addEventListener("key", () => this.filteringPokemons());
+    this.filterPower.addEventListener("keyup", () => this.filteringPokemons());
 
     // Bind Añadir a Lista de deseos
     document
