@@ -53,27 +53,23 @@ export class PokemonController {
 
   async filteringPokemons() {
     this.pokemonsFiltered = [];
-    this.model.pokemons.forEach((pkm) => {
-      this.safePokemon = false;
+    const weightFilter = parseFloat(this.filterWeight.value) || 0;
+    const powerFilter = parseFloat(this.filterPower.value) || 0;
+    const typeFilter = this.filterType.value.toLowerCase();
 
-      if (pkm.pkm_type[0].type.name.includes(this.filterType.value)) {
-        this.safePokemon = true;
-      } else if (
-        pkm.pkm_type.length > 1 &&
-        pkm.pkm_type[1].type.name.includes(this.filterType.value)
-      ) {
-        this.safePokemon = true;
-      }
-      if (this.safePokemon) {
-        this.pokemonsFiltered.push(pkm);
-      }
+    this.model.pokemons.forEach((pkm) => {
+        let safePokemon = true;
+
+        if (typeFilter) {
+            safePokemon = pkm.pkm_type.some(type => type.type.name.toLowerCase().includes(typeFilter));
+        }
+
+        if (safePokemon && pkm.weight >= weightFilter && pkm.attack >= powerFilter) {
+            this.pokemonsFiltered.push(pkm);
+        }
     });
     this.view.displayPokemons(this.pokemonsFiltered);
-  }
-
-  async filteringPokemonsByWeight(){
-    this.pokemonsFiltered
-  }
+}
 
   mostrarListaDeseo() {
     //console.log(this.newDesireList);
