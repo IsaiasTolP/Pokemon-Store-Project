@@ -3,7 +3,7 @@ export class PokemonView {
   constructor() {
     this.pokedex = document.getElementById("pokedex");
     this.loadingMessage = document.querySelector(".cargandoDatos");
-    this.consoleElements = document.querySelectorAll(".input, .btnMenu");
+    this.consoleElements = document.querySelectorAll(".input, .btnMenu, .btnBBDD");
   }
 
   showLoading() {
