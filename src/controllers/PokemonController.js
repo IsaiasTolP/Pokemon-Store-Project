@@ -120,8 +120,9 @@ export class PokemonController {
 
   mostrarListaDeseo() {
     let data = {
-      tipo: "Watwe",
-      nombre: "Darum",
+      type: "Watwe",
+      name: "Darum",
+      power: 10,
     };
 
     //this.getAllPokemon();
