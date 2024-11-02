@@ -165,3 +165,12 @@ body {
   font: bold;
   background-image: linear-gradient(rgb(169, 248, 218), rgb(0, 255, 115));
 }
+
+.noCoincidencias {
+  text-align: center;
+  display: none;
+}
+
+.selected {
+  opacity: 0.5;
+}

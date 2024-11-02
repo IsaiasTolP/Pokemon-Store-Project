@@ -55,12 +55,25 @@ export class PokemonController {
     // Bind Cards pokemons
     this.cardPokemons = document.querySelectorAll(".card");
     this.cardPokemons.forEach((card) => {
-      card.addEventListener("click", () => this.pokemonsClicked(card.id));
+        card.addEventListener("click", () => {
+            this.togglePokemonSelection(card);
+        });
     });
   }
 
-  pokemonsClicked(cardId) {
-    this.newDesireList.push(cardId);
+  togglePokemonSelection(card) {
+    const cardId = card.id;
+    const index = this.newDesireList.indexOf(cardId);
+
+    // Si el Pokémon ya está en la lista, lo eliminamos y quitamos la clase
+    if (index !== -1) {
+        this.newDesireList.splice(index, 1);
+        card.classList.remove("selected");
+    } else {
+        // Si el Pokémon no está en la lista, lo añadimos y agregamos la clase
+        this.newDesireList.push(cardId);
+        card.classList.add("selected");
+    }
   }
 
   async filteringPokemons() {
@@ -80,6 +93,13 @@ export class PokemonController {
             this.pokemonsFiltered.push(pkm);
         }
     });
+
+    if (this.pokemonsFiltered.length === 0) {
+      document.querySelector('.noCoincidencias').style.display = 'block';
+  } else {
+      document.querySelector('.noCoincidencias').style.display = 'none';
+  }
+
     this.view.displayPokemons(this.pokemonsFiltered);
 }
 
@@ -125,6 +145,11 @@ export class PokemonController {
       power: 10,
     };
 
+    if (this.newDesireList.length === 0) {
+      window.alert("No tienes ningún Pokémon seleccionado para añadir a la Lista de Deseo.");
+      return; // Salir de la función si no hay Pokémon seleccionados
+  }
+
     //this.getAllPokemon();
     //this.createPokemon(data);
     //console.log(this.newDesireList);
@@ -137,9 +162,11 @@ export class PokemonController {
       // ToDo Guardar en BBDD
       console.log("Guardando nueva lista de deseo...");
     } else if (window.confirm("¿Quieres deseleccionar los pokemons?")) {
-      // ToDo desmarcar pokemons
-
       this.newDesireList = [];
+      // Quitamos la clase 'selected' de todas las cartas
+      this.cardPokemons.forEach((card) => {
+        card.classList.remove("selected");
+    });
     }
   }
 
