@@ -1,27 +1,47 @@
-// PokemonController.js
 import ConectToFirebase from "../models/conectToFireStore.js";
 import { PokemonModel } from "../models/PokemonModel.js";
 import { PokemonView } from "../views/PokemonView.js";
+
 export class PokemonController {
   constructor() {
     this.db = new ConectToFirebase();
     this.model = new PokemonModel();
     this.view = new PokemonView();
+    this.setupAuth();
 
     this.pokemonsFiltered = [];
     this.newDesireList = [];
-    this.auxPokemons
+    this.auxPokemons;
 
     // Bind button event
-    document
-      .querySelector("button")
-      .addEventListener("click", () => this.init());
-
-      // Bind Botons de BBDD de prueba
-    document.querySelectorAll(".btnBBDD").forEach((btnBBDD) => {
-      btnBBDD.addEventListener("click", () => this.bbddAction(btnBBDD.id));
-    });
+    document.querySelector("button").addEventListener("click", () => this.init());
   }
+
+  setupAuth() {
+    const loginButton = document.getElementById("loginButton");
+    const logoutButton = document.getElementById("logoutButton");
+
+    // Verificar el estado de autenticación
+    this.db.onAuthStateChanged((user) => {
+      if (user) {
+        if (loginButton) loginButton.style.display = "none";
+        if (logoutButton) logoutButton.style.display = "block";
+      } else {
+        if (loginButton) loginButton.style.display = "block";
+        if (logoutButton) logoutButton.style.display = "none";
+        window.location.href = "login.html"; // Redirige al login
+      }
+    });
+
+    if (logoutButton) {
+      logoutButton.addEventListener("click", () => {
+        this.db.signOut().then(() => {
+          window.location.href = "login.html"; // Redirige al login
+        });
+      });
+    }
+  }
+
   async init() {
     this.view.showLoading();
     try {
@@ -30,10 +50,21 @@ export class PokemonController {
       this.view.showConsole();
       this.view.displayPokemons(this.model.getAllPokemons());
       this.bindingEvents();
+      await this.loadWishlist();
     } catch (error) {
       console.error(error);
     }
   }
+
+  async loadWishlist() {
+    try {
+      const wishlistPokemons = await this.db.readAll(); // Obtener la lista de deseos del usuario
+      this.view.displayWishlist(wishlistPokemons, this.handleDelete.bind(this)); // Mostrar la lista de deseos en la vista
+    } catch (error) {
+      console.error("Error cargando la lista de deseos:", error);
+    }
+  }
+
   async bindingEvents() {
     // Bind input filterType
     this.filterType = document.querySelector("#filtroTipo");
@@ -50,14 +81,14 @@ export class PokemonController {
     // Bind Añadir a Lista de deseos
     document
       .querySelector("#btnAgnadeListaDeseo")
-      .addEventListener("click", this.mostrarListaDeseo.bind(this));
+      .addEventListener("click", this.guardarListaDeseo.bind(this));
 
     // Bind Cards pokemons
     this.cardPokemons = document.querySelectorAll(".card");
     this.cardPokemons.forEach((card) => {
-        card.addEventListener("click", () => {
-            this.togglePokemonSelection(card);
-        });
+      card.addEventListener("click", () => {
+        this.togglePokemonSelection(card);
+      });
     });
   }
 
@@ -67,12 +98,12 @@ export class PokemonController {
 
     // Si el Pokémon ya está en la lista, lo eliminamos y quitamos la clase
     if (index !== -1) {
-        this.newDesireList.splice(index, 1);
-        card.classList.remove("selected");
+      this.newDesireList.splice(index, 1);
+      card.classList.remove("selected");
     } else {
-        // Si el Pokémon no está en la lista, lo añadimos y agregamos la clase
-        this.newDesireList.push(cardId);
-        card.classList.add("selected");
+      // Si el Pokémon no está en la lista, lo añadimos y agregamos la clase
+      this.newDesireList.push(cardId);
+      card.classList.add("selected");
     }
   }
 
@@ -83,106 +114,88 @@ export class PokemonController {
     const typeFilter = this.filterType.value.toLowerCase();
 
     this.model.pokemons.forEach((pkm) => {
-        let safePokemon = true;
+      let safePokemon = true;
 
-        if (typeFilter) {
-            safePokemon = pkm.pkm_type.some(type => type.type.name.toLowerCase().includes(typeFilter));
-        }
+      if (typeFilter) {
+        safePokemon = pkm.pkm_type.some(type => type.type.name.toLowerCase().includes(typeFilter));
+      }
 
-        if (safePokemon && pkm.weight >= weightFilter && pkm.attack >= powerFilter) {
-            this.pokemonsFiltered.push(pkm);
-        }
+      if (safePokemon && pkm.weight >= weightFilter && pkm.attack >= powerFilter) {
+        this.pokemonsFiltered.push(pkm);
+      }
     });
 
     if (this.pokemonsFiltered.length === 0) {
       document.querySelector('.noCoincidencias').style.display = 'block';
-  } else {
+    } else {
       document.querySelector('.noCoincidencias').style.display = 'none';
-  }
+    }
 
     this.view.displayPokemons(this.pokemonsFiltered);
-}
-
-  // Metódo de prueba de BBDD
-  bbddAction(btnClicked) {
-    switch (btnClicked) {
-      case "readAllPokemon":
-        this.getAllPokemon();
-        break;
-
-      case "addPokemon":
-        let data = {
-          tipo: "Iron",
-          nombre: "Fixy",
-        };
-        this.createPokemon(data);
-        break;
-
-      case "updatePokemon":
-        const id = "dJEvAx4dTIUY9IOeoy7E";
-        let data2 = {
-          tipo: "Water",
-          nombre: "Darum",
-        };
-        this.updatePokemon(id, data2);
-        break;
-
-      case "deletePokemon":
-        const id2 = "PezyN0gwr0vzXhBApCxU";
-        this.deletePokemon(id2);
-        break;
-
-      default:
-        break;
-    }
   }
 
-
-  mostrarListaDeseo() {
-    let data = {
-      type: "Watwe",
-      name: "Darum",
-      power: 10,
-    };
-
+  async guardarListaDeseo() {
     if (this.newDesireList.length === 0) {
       window.alert("No tienes ningún Pokémon seleccionado para añadir a la Lista de Deseo.");
       return; // Salir de la función si no hay Pokémon seleccionados
-  }
+    }
 
-    //this.getAllPokemon();
-    //this.createPokemon(data);
-    //console.log(this.newDesireList);
-    let txt = "¿Quieres añadir los siguientes Pokemons a la Lista de Deseo?";
+    let txt = "¿Quieres añadir los siguientes Pokémons a la Lista de Deseo?";
     this.newDesireList.forEach((pkm) => {
-      txt = txt + " " + pkm;
+      txt += ` ${pkm}`;
     });
 
-    if (window.confirm(txt)) {
-      // ToDo Guardar en BBDD
-      console.log("Guardando nueva lista de deseo...");
-    } else if (window.confirm("¿Quieres deseleccionar los pokemons?")) {
-      this.newDesireList = [];
-      // Quitamos la clase 'selected' de todas las cartas
-      this.cardPokemons.forEach((card) => {
-        card.classList.remove("selected");
-    });
+    if (!window.confirm(txt)) {
+      return; // Salir si el usuario cancela
+    }
+
+    try {
+      // Obtener todos los Pokémon guardados actualmente en la base de datos
+      const existingPokemons = await this.db.readAll();
+      const existingIds = existingPokemons.map(p => p.id);
+
+      // Crear una lista de objetos para guardar, excluyendo los duplicados
+      const allPokemons = this.model.getAllPokemons();
+      const pokemonsToSave = this.newDesireList.map((pkmId) => {
+        const numericId = parseInt(pkmId, 10); // Convertir el ID a número
+        const pokemon = allPokemons.find((p) => p.id === numericId);
+        if (!pokemon) {
+          console.warn(`Pokemon con ID ${pkmId} no encontrado en allPokemons.`);
+          return null;
+        }
+        return {
+          id: pokemon.id,
+          name: pokemon.name,
+          price: parseFloat(pokemon.price) || 0,
+        };
+      }).filter(p => p !== null);
+
+      // Guardar cada Pokémon en Firestore
+      for (const pkm of pokemonsToSave) {
+        await this.db.create(pkm);
+      }
+
+      console.log("Pokémons guardados exitosamente en la lista de deseos.");
+      window.alert("Pokémons guardados exitosamente en la lista de deseos.");
+      await this.loadWishlist();
+    } catch (error) {
+      console.error("Error guardando la lista de deseos en Firestore:", error);
+      window.alert("Error guardando la lista de deseos. Inténtalo de nuevo.");
     }
   }
 
-  async createPokemon(data) {
-    return await this.db.create(data);
-  }
-
-  async getAllPokemon() {
-    return await this.db.readAll();
-  }
-
-  async updatePokemon(id, data) {
-    return await this.db.update(id, data);
-  }
-
-  async deletePokemon(id) {
-    return await this.db.delete(id);
-  }
+  // Método para manejar la eliminación de un Pokémon de la lista de deseos
+  async handleDelete(id) {
+    console.log(`Intentando eliminar Pokémon con ID: ${id}`); // Debugging
+    try {
+      const numID = Number(id)
+      await this.db.delete(numID); // Llama al método de eliminación en la base de datos
+      console.log(`Pokémon con ID: ${id} eliminado de la base de datos.`); // Debugging
+      window.alert("Pokémon eliminado de la lista de deseos."); // Mensaje de confirmación
+      await this.loadWishlist(); // Recargar la lista de deseos
+    } catch (error) {
+        console.error("Error eliminando Pokémon de la lista de deseos:", error);
+        window.alert("Error eliminando Pokémon de la lista de deseos. Inténtalo de nuevo.");
+    }
+}
 }

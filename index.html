@@ -16,17 +16,6 @@
 
         <!-- Botones de prueba de BBDD FireStore-->
         <br>
-        <div class="firestoreButtons">
-            <input type="button" id="readAllPokemon" class="btnBBDD"
-                value="Leer Coleccion pokemon" />
-            <input type="button" id="addPokemon" class="btnBBDD"
-                value="Añadir pokemon" />
-            <input type="button" id="updatePokemon" class="btnBBDD"
-                value="Actualizar Pokemon" />
-            <input type="button" id="deletePokemon" class="btnBBDD"
-                value="Borrar Pokemon" />
-        </div>
-
         <div class="filterButtons">
             <input type="text" id="filtroTipo" class="input"
                 placeholder="Buscar por tipo...">
@@ -45,10 +34,26 @@
             <input type="button" id="btnVerCompra" class="btnMenu"
                 value="Ver compra" />
         </div>
+
+        <div class="authButtons">
+            <button id="loginButton" class="btnMenu">Ir a Login</button>
+            <button id="logoutButton" class="btnMenu" style="display: none;">Cerrar Sesión</button>
+        </div>
+
         <div id="pokedex">
             <p class="cargandoDatos">Cargando datos...</p>
         </div>
         <p class="noCoincidencias">No se han encontrado Coincidencias</p>
+
+        <div id="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Lista de Deseos</h2>
+                <p>Aquí puedes ver tu lista de deseos.</p>
+                <div class="wishlist-content"></div>
+            </div>
+        </div>
+
         <script type="module" src="./src/script.js"></script>
     </body>
 </html>
