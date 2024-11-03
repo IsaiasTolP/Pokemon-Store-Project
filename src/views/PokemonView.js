@@ -4,34 +4,52 @@ export class PokemonView {
     this.loadingMessage = document.querySelector(".cargandoDatos");
     this.consoleElements = document.querySelectorAll(".input, .btnMenu");
     this.modal = document.getElementById("modal");
-    this.closeBtn = document.querySelector(".close");
+    this.purchaseModal = document.getElementById("modalCompra");
+    this.closeBtn = document.querySelectorAll(".close");
     
     this.setupModalEvents();
   }
-
+  // Función que prepara las acciones a llevar a cabo con los modales (Las ventanas)
   setupModalEvents() {
     const btnVerLista = document.getElementById("btnVerLista");
+    const btnVerCompra = document.getElementById("btnVerCompra");
+  
+    // Asigna la función showModal al botón "Ver lista de deseos"
     btnVerLista.onclick = () => {
-      this.showModal();
+      this.showModal("btnVerLista");
     };
-
-    this.closeBtn.onclick = () => {
-      this.hideModal();
+  
+    // Asigna la función showModal al botón "Ver compra"
+    btnVerCompra.onclick = () => {
+      this.showModal("btnVerCompra");
     };
-
+  
+    // Configura el botón de cerrar
+    this.closeBtn.forEach((e) => {
+      e.onclick = () => {this.hideModal();
+      }
+    });
+  
+    // Cierra el modal cuando el usuario haga clic fuera del contenido
     window.onclick = (event) => {
-      if (event.target === this.modal) {
+      if (event.target === this.modal || event.target === this.purchaseModal) {
         this.hideModal();
       }
     };
   }
-
-  async showModal() {
-    this.modal.style.display = "flex"; // Mostrar el modal
+  
+  // Gestionamos los modales
+  async showModal(buttonType) {
+    if (buttonType === "btnVerCompra") {
+      this.purchaseModal.style.display = "flex";
+    } else if (buttonType === "btnVerLista") {
+      this.modal.style.display = "flex";
+    }
   }
 
   hideModal() {
-    this.modal.style.display = "none"; // Ocultar el modal
+    this.modal.style.display = "none";
+    this.purchaseModal.style.display = "none"
   }
 
   showLoading() {
@@ -73,17 +91,18 @@ export class PokemonView {
     });
   }
 
+  /*
+  Esta función muestra la lista de deseos y pone los eventos a los botones de borrado con el manejador de eliminación que recibe como argumento
+  */
   displayWishlist(wishlistPokemons, onDelete) {
     const wishlistContent = this.modal.querySelector(".wishlist-content");
     wishlistContent.innerHTML = "";
 
-    // Verificar si la lista de deseos está vacía
     if (wishlistPokemons.length === 0) {
       wishlistContent.innerHTML = "<p>No hay Pokémon en tu lista de deseos.</p>";
       return;
     }
 
-    // Iterar sobre cada Pokémon en la lista de deseos
     wishlistPokemons.forEach((pokemon) => {
       const pokemonItem = document.createElement("div");
       pokemonItem.classList.add("wishlist-item");
@@ -95,14 +114,40 @@ export class PokemonView {
       wishlistContent.appendChild(pokemonItem);
     });
 
-    // Agregar evento de clic a los botones de eliminación
     const deleteButtons = wishlistContent.querySelectorAll(".delete-button");
     deleteButtons.forEach((button) => {
       button.addEventListener("click", () => {
         const id = button.getAttribute("data-id");
-        onDelete(id);  // Llama a la función onDelete proporcionada
+        onDelete(id);
       });
     });
-}
+  }
 
+  /*
+  Se muestran todos las compras dentro del modal de compras
+  */
+  displayPurchases(purchases) {
+    const purchasesContent = this.purchaseModal.querySelector(".purchase-content");
+    purchasesContent.innerHTML = "";
+  
+    if (purchases.length === 0) {
+      purchasesContent.innerHTML = "<p>No hay compras registradas.</p>";
+      return;
+    }
+  
+    purchases.forEach((purchase) => {
+      const purchaseItem = document.createElement("div");
+      purchaseItem.classList.add("purchase-item");
+      
+      const purchaseDate = new Date(purchase.date).toLocaleDateString("es-ES");
+      purchaseItem.innerHTML = `
+        <div>
+          <strong>${purchase.pokemonName}</strong> (ID: ${purchase.pokemonId}) - Precio: ${purchase.price}€
+          <br>
+          Fecha de compra: ${purchaseDate}
+        </div>`;
+        
+      purchasesContent.appendChild(purchaseItem);
+    });
+  }
 }
